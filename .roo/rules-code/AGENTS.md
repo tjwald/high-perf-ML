@@ -20,6 +20,7 @@ This file provides guidance to agents when working in Code mode within this repo
     - Prefer collection expressions `[1, 2, 3]` over `new float[] { 1, 2, 3 }`.
     - Use `System.Threading.Lock` instead of `new object()` for locking.
 - **Stability**: When working on tests, NEVER change the library code unless implementing a new feature (follow TDD).
-- **DI Assembly**: Use `AddPipeline<TInput>()` and `Then<TOutput, TStep>()` to construct compile-time typed finite pipelines.
-- **Decorator Scope**: Configure decorators on the `Then` stage they govern; decorators are declared outermost to innermost.
-- **Inference Implementation**: Implement return-value `IPipeline<TInput, TOutput>`. Add `IDestinationPipeline<TInput, TOutput>` when execution can write into a caller-supplied destination buffer.
+- **DI Assembly**: Use `AddPipeline<TInput>()`, chain steps with `Then<TNext, TPipeline>()`, `ThenOnnxModel()`, or `Fork(...)`.
+- **Decorator Scope**: Configure decorators using `.Use(...)`; decorators wrap the complete remainder of the chain. To constrain scope, nest via `.Then(inner => inner.Use(...).Then(...))`.
+- **Inference Implementation**: Implement return-value `IPipeline<TInput, TOutput>`. Add `IDestinationPipeline<TInput, TOutput>` when execution can write into a caller-supplied destination buffer without intermediate allocations.
+- **Batch Operations**: Register batch operations in DI via `services.AddMemoryBatch<T>()` and `services.AddTensorBatch<T>()`. Resolve in decorators via `serviceProvider.GetRequiredWritableBatch<T>()`. NEVER use runtime reflection.

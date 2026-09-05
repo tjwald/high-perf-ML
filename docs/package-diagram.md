@@ -8,6 +8,7 @@ graph TD
   NLPDI[FAI.NLP.Extensions.DI\ntext policy decorators]
   Vision[FAI.Vision\nimage task pipelines]
   ONNX[FAI.Onnx\nmodel pipelines and runtime pools]
+  Eval[FAI.Extensions.Evaluation\ndataset evaluation & telemetry]
   App[Application inference facade]
 
   Core --> DI
@@ -19,8 +20,9 @@ graph TD
   DI --> App
   NLPDI --> App
   ONNX --> App
+  App --> Eval
 ```
 
 ## Extension Model
 
-Runtime packages implement `IPipeline` for model-specific disposable tensor outputs. Domain packages implement task pipelines and policies without introducing another execution abstraction. Pipelines that can write into caller-supplied storage may also implement `IDestinationPipeline`. Applications compose those pieces with `AddPipeline<TInput>()` and `Then<TOutput, TPipeline>()`, then expose an `IInference<TInput, TOutput>` facade where needed.
+Runtime packages implement `IPipeline` for model-specific disposable tensor outputs. Domain packages implement task pipelines and policies without introducing another execution abstraction. Pipelines that can write into caller-supplied storage may also implement `IDestinationPipeline`. Applications compose those pieces with `AddPipeline<TInput>()` and `Then<TOutput, TPipeline>()`, then expose an `IInference<TInput, TOutput>` facade where needed. Evaluation suites evaluate those pipelines against streaming datasets via `FAI.Extensions.Evaluation`.
